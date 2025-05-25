@@ -72,7 +72,7 @@ class Guest:
 
         if "Osoba towarzysząca" in display_name:
             display_name = display_name.replace(" i Osoba towarzysząca", "")
-            display_name += "+1"
+            display_name += " (+1)"
         return display_name
 
     def add_group(self, group_name: str):
@@ -125,6 +125,7 @@ class Table:
                 self.occupied_seats += 2
             else:
                 self.occupied_seats += 1
+            print(f"{guest.display_name} przypisany do stołu {self.table_id}")
         else:
             print(f"Not enough free seats for {guest.display_name}")
 
