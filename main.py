@@ -1,5 +1,7 @@
 import flet as ft
 from guest_manager import GuestList, Guest, Table
+from tab_groups import get_tab_groups_content
+from groups_manager import GroupList, Group
 
 
 def main(page: ft.Page):
@@ -10,6 +12,8 @@ def main(page: ft.Page):
     # Załaduj listę gości
     gl = GuestList()
     gl.load_list("lista_gosci.txt")
+    grl = GroupList()
+    grl.load_default_groups("default_groups.txt")
 
     # lista stołów
     tables_list: list[Table] = []
@@ -150,15 +154,27 @@ def main(page: ft.Page):
     )
 
     # Layout
-    page.add(
-        ft.Row(
-            [
-                tables,
-                guest_list,
-            ],
-            expand=True,
-        )
+    tab1_content = ft.Row(
+        [tables, guest_list],
+        expand=True,
     )
+
+    tab2_content = ft.Container(
+        content=ft.Text("Tutaj cos bedzie", size=20),
+        alignment=ft.alignment.center,
+        expand=True,
+    )
+
+    tabs = ft.Tabs(
+        selected_index=0,
+        expand=True,
+        tabs=[
+            ft.Tab(text="Stoły", content=tab1_content),
+            ft.Tab(text="Grupy", content=get_tab_groups_content(gl, grl)),
+        ],
+    )
+
+    page.add(tabs)
 
 
 ft.app(target=main)

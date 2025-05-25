@@ -4,7 +4,7 @@ from guest_manager import Guest
 class Group:
     def __init__(self, name):
         self.name = name
-        self.members = []
+        self.members: list[Guest] = []
 
     def add_guest(self, guest: Guest):
         if guest not in self.members:
@@ -17,19 +17,24 @@ class Group:
             guest.groups.remove(self.name)
 
 
-class GuestList:
+class GroupList:
     def __init__(self):
-        self.guests = []
-        self.groups = {}
+        self.groups: list[Group] = []
+
+    def load_default_groups(self, filename):
+        with open(filename, encoding="utf-8") as f:
+            for line in f:
+                name = line.strip()
+                if name:
+                    group = Group(name)
+                    self.groups.append(group)
 
     def add_group(self, group_name):
         if group_name not in self.groups:
-            self.groups[group_name] = Group(group_name)
-
-    def assign_guest_to_group(self, guest: Guest, group_name: str):
-        self.add_group(group_name)
-        self.groups[group_name].add_guest(guest)
+            self.groups.append(Group(group_name))
 
     def list_groups(self):
-        for group_name, group in self.groups.items():
-            print(f"{group_name}: {[guest.display_name for guest in group.members]}")
+        for group in self.groups:
+            print(f"{group}:")
+            for guest in group.members:
+                print(f" - {guest.display_name}")
