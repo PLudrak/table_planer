@@ -44,7 +44,7 @@ def main(page: ft.Page):
             content=label,
             padding=10,
             width=150,
-            height=150 if table.type == "round" else 100,
+            height=150 if table.type == "round" else 200,
             border=ft.border.all(1),
             border_radius=75 if table.type == "round" else 5,
             alignment=ft.alignment.center,
@@ -57,7 +57,7 @@ def main(page: ft.Page):
         ]
 
         # uklad gosci przy stole
-        max_per_column = 3
+        max_per_column = 3 if table.type == "round" else 5
         guest_columns = []
 
         for i in range(0, len(table.guests), max_per_column):
@@ -88,14 +88,13 @@ def main(page: ft.Page):
         if selected_guest:
             table_id = e.control.data
             table = next(t for t in tables_list if t.table_id == table_id)
-            table.add_guest(selected_guest)
-
-            remove_guest_from_list(selected_guest)
-            idx = tables_list.index(table)
-            table_widgets[idx] = build_table_widget(table)
+            if table.add_guest(selected_guest):
+                remove_guest_from_list(selected_guest)
+                idx = tables_list.index(table)
+                table_widgets[idx] = build_table_widget(table)
+                update_tables_ui()
 
             selected_guest = None
-            update_tables_ui()
 
     def remove_guest_from_list(selected_guest):
         guest_buttons[:] = [b for b in guest_buttons if b.data != selected_guest.id]
@@ -128,7 +127,17 @@ def main(page: ft.Page):
     tables = ft.Container(content=table_column, expand=3)
     # Stwórz listę klikalnych przycisków gości
     guest_buttons = [
-        ft.TextButton(text=guest.names, data=guest.id, on_click=on_guest_click)
+        ft.TextButton(
+            content=ft.Container(
+                content=ft.Text(guest.names, text_align=ft.TextAlign.LEFT),
+                alignment=ft.alignment.center_left,
+                expand=True,
+            ),
+            data=guest.id,
+            on_click=on_guest_click,
+            style=ft.ButtonStyle(alignment=ft.alignment.center_left),
+            expand=True,
+        )
         for guest in gl.guests
     ]
 

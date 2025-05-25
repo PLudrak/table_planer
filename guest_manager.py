@@ -126,8 +126,10 @@ class Table:
             else:
                 self.occupied_seats += 1
             print(f"{guest.display_name} przypisany do stołu {self.table_id}")
+            return True
         else:
             print(f"Not enough free seats for {guest.display_name}")
+            return False
 
     def can_add_guest(self, guest: Guest):
         if guest.pair:
